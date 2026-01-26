@@ -12,7 +12,14 @@ import java.util.UUID
 
 class CrimeDetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentCrimeDetailBinding
+    // Propriété nullable pour gérer la destruction de la vue
+    private var _binding: FragmentCrimeDetailBinding? = null
+
+    // Propriété non-nullable pour un accès facile dans le code
+    private val binding
+        get() = checkNotNull(_binding) {
+            "Impossible d'accéder au binding car la vue est null. Est-ce que la vue a été créée ?"
+        }
 
     private lateinit var incident: Crime
 
@@ -32,7 +39,7 @@ class CrimeDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCrimeDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentCrimeDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,13 +50,21 @@ class CrimeDetailFragment : Fragment() {
             etTitleCrime.doOnTextChanged { text, _, _, _ ->
                 incident = incident.copy(titre = text.toString())
             }
+
             btnDateCrime.apply {
                 text = incident.date.toString()
                 isEnabled = false
             }
+
             cbCrimeResolu.setOnCheckedChangeListener { _, estCoche ->
                 incident = incident.copy(estResolu = estCoche)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Libération de la référence au binding pour éviter les fuites mémoire
+        _binding = null
     }
 }
