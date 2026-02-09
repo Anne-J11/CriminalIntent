@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.criminalintent.databinding.FragmentCrimeDetailBinding
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.UUID
 
@@ -21,9 +23,14 @@ class CrimeDetailFragment : Fragment() {
             "Impossible d'accéder au binding car la vue est null. Est-ce que la vue a été créée ?"
         }
 
-    private lateinit var incident: Crime
+    private val args: CrimeDetailFragmentArgs by navArgs()
+    private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
+        CrimeListViewModelFactory(args.incidentID)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+
+
+   /* override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         incident = Crime(
@@ -32,7 +39,7 @@ class CrimeDetailFragment : Fragment() {
             date = Date(),
             estResolu = false
         )
-    }
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,16 +55,22 @@ class CrimeDetailFragment : Fragment() {
 
         binding.apply {
             etTitleCrime.doOnTextChanged { text, _, _, _ ->
-                incident = incident.copy(titre = text.toString())
+                crimeDetailViewModel.majIncident {
+                ancienIncident -> ancienIncident.copy(titre = text.toString())}
             }
 
             btnDateCrime.apply {
-                text = incident.date.toString()
                 isEnabled = false
             }
 
             cbCrimeResolu.setOnCheckedChangeListener { _, estCoche ->
-                incident = incident.copy(estResolu = estCoche)
+                crimeDetailViewModel.majIncident {
+                ancienIncident -> ancienIncident.copy(estResolu = estCoche)}
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            crimeDetailViewModel.incident.collect {
+                incident -> incident?.let { majUI(it) }
             }
         }
     }

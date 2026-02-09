@@ -2,8 +2,11 @@
 <androidx.fragment.app.FragmentContainerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/conteneur_fragment"
-    android:name="com.example.criminalintent.CrimeListFragment"
+    android:name="androidx.navigation.fragment.NavHostFragment"
+    app:defaultNavHost="true"
+    app:navGraph="@navigation/graphe_navigation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" />

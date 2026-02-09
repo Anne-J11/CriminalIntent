@@ -18,6 +18,7 @@ class CrimeRepository private constructor(context: Context) {
         )
         .createFromAsset(NOM_BD)
         .build()
+        .fallbackToDestructiveMigration()
 
     fun getIncidents(): Flow<List<Crime>> = bd.crimeDAO().getIncidents()
     suspend fun getIncident(id: UUID) = bd.crimeDAO().getIncident(id)

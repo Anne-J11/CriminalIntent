@@ -1,15 +1,16 @@
 package com.example.criminalintent.bd
 
-import androidx.room.TypeConverters
+import androidx.room.TypeConverter
 import java.util.Date
 
 class ConvTypeIncident {
-    @TypeConverters
-    fun deDate(date: Date): Long{
+    @TypeConverter
+    fun deDate(date: Date): Long {
         return date.time
     }
-    @TypeConverters
-    fun versDtae(date: Long): Date{
-        return Date(date)
+
+    @TypeConverter
+    fun versDate(milliseconds: Long): Date {
+        return Date()
     }
 }

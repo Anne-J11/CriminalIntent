@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.criminalintent.Crime
 
-@Database(entities = [Crime::class], version = 1)
+@Database(entities = [Crime::class], version = 2)
 @TypeConverters(ConvTypeIncident::class)
 abstract class BDIncident : RoomDatabase(){
     abstract fun crimeDAO(): CrimeDAO
