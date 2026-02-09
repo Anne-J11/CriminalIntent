@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.criminalintent.bd.BDIncident
 import java.util.UUID
+import kotlinx.coroutines.flow.Flow
 
 
 private const val NOM_BD = "BDIncident"
@@ -18,7 +19,7 @@ class CrimeRepository private constructor(context: Context) {
         .createFromAsset(NOM_BD)
         .build()
 
-    suspend fun getIncidents(): List<Crime> = bd.crimeDAO().getIncidents()
+    fun getIncidents(): Flow<List<Crime>> = bd.crimeDAO().getIncidents()
     suspend fun getIncident(id: UUID) = bd.crimeDAO().getIncident(id)
     companion object {
         private var INSTANCE: CrimeRepository? = null

@@ -4,12 +4,13 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.example.criminalintent.Crime
 import java.util.UUID
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CrimeDAO {
     @Query("SELECT * FROM crime")
-    suspend fun chargerIncidents(): List<Crime>
+    fun getIncidents(): Flow<List<Crime>>
 
     @Query("SELECT * FROM crime WHERE id=(:id)")
-    suspend fun chargerIncident(id: UUID): Crime?
+    suspend fun getIncident(id: UUID): Crime?
 }

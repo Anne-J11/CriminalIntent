@@ -1,7 +1,7 @@
 package com.example.criminalintent
 
 import android.os.Bundle
-import android.util.Log
+import kotlinx.coroutines.flow.Flow
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +13,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.criminalintent.databinding.FragmentCrimeListBinding
 import kotlinx.coroutines.launch
-
-
-private const val TAG = "CrimeListFragment"
 
 class CrimeListFragment : Fragment() {
     private val crimeListViewModel: CrimeListViewModel by viewModels()
@@ -50,9 +47,9 @@ class CrimeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
-                val listeIncidents = crimeListViewModel.chargerIncidents()
-                binding.crimeRecyclerView.adapter = CrimeListAdapter(listeIncidents)
-            }
+                crimeListViewModel.listeIncidents.collect{
+                listeIncidents -> binding.crimeRecyclerView.adapter = CrimeListAdapter(listeIncidents)
+            }}
         }
     }
 
