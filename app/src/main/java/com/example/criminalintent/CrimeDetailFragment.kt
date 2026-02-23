@@ -6,11 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
 import com.example.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
-import java.util.Date
-import java.util.UUID
 
 class CrimeDetailFragment : Fragment() {
 
@@ -23,23 +27,13 @@ class CrimeDetailFragment : Fragment() {
             "Impossible d'accéder au binding car la vue est null. Est-ce que la vue a été créée ?"
         }
 
+    // Récupération des arguments de navigation (l'ID de l'incident)
     private val args: CrimeDetailFragmentArgs by navArgs()
+
+    // Création du ViewModel avec la fabrique (factory)
     private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
-        CrimeListViewModelFactory(args.incidentID)
+        CrimeDetailViewModelFactory(args.incidentID)
     }
-
-
-
-   /* override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        incident = Crime(
-            id = UUID.randomUUID(),
-            titre = "",
-            date = Date(),
-            estResolu = false
-        )
-    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,23 +48,38 @@ class CrimeDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+            // Écouteur pour le titre de l'incident
             etTitleCrime.doOnTextChanged { text, _, _, _ ->
-                crimeDetailViewModel.majIncident {
-                ancienIncident -> ancienIncident.copy(titre = text.toString())}
+                crimeDetailViewModel.majIncident { ancienIncident ->
+                    ancienIncident.copy(titre = text.toString())
+                }
             }
 
-            btnDateCrime.apply {
-                isEnabled = false
-            }
+            // Le bouton de date est désactivé pour l'instant
+            btnDateCrime.apply {}
 
+            btnTimeCrime.apply {}
+
+            // Écouteur pour la case à cocher
             cbCrimeResolu.setOnCheckedChangeListener { _, estCoche ->
-                crimeDetailViewModel.majIncident {
-                ancienIncident -> ancienIncident.copy(estResolu = estCoche)}
+                crimeDetailViewModel.majIncident { ancienIncident ->
+                    ancienIncident.copy(estResolu = estCoche)
+                }
             }
         }
+
+        // Observer les changements de l'incident
         viewLifecycleOwner.lifecycleScope.launch {
-            crimeDetailViewModel.incident.collect {
-                incident -> incident?.let { majUI(it) }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                crimeDetailViewModel.incident.collect { incident ->
+                    incident?.let { majUI(it) }
+                }
+            }
+        }
+        setFragmentResultListener(DatePickerFragment.DATE_REQUEST_KEY) { _, bundle ->
+            val nouvelleDate = bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
+            crimeDetailViewModel.majIncident {
+                it.copy(date = nouvelleDate)
             }
         }
     }
@@ -79,5 +88,23 @@ class CrimeDetailFragment : Fragment() {
         super.onDestroyView()
         // Libération de la référence au binding pour éviter les fuites mémoire
         _binding = null
+    }
+
+    // Fonction privée pour mettre à jour l'interface
+    private fun majUI(incident: Crime) {
+        binding.apply {
+            // Vérifier que le texte est différent avant de le mettre à jour
+            // pour éviter une boucle infinie
+            if (etTitleCrime.text.toString() != incident.titre) {
+                etTitleCrime.setText(incident.titre)
+            }
+            btnDateCrime.text = incident.date.toString()
+            btnDateCrime.setOnClickListener {
+                findNavController().navigate(
+                    CrimeDetailFragmentDirections.selectDate(incident.date)
+                )
+            }
+            cbCrimeResolu.isChecked = incident.estResolu
+        }
     }
 }

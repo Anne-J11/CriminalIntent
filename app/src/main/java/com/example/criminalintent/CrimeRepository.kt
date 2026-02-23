@@ -3,25 +3,38 @@ package com.example.criminalintent
 import android.content.Context
 import androidx.room.Room
 import com.example.criminalintent.bd.BDIncident
-import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
-
+import kotlinx.coroutines.launch
+import java.util.UUID
+import android.util.Log
 
 private const val NOM_BD = "BDIncident"
 
-class CrimeRepository private constructor(context: Context) {
+class CrimeRepository private constructor(
+    context: Context,
+    private val coroutineScope: CoroutineScope = GlobalScope
+) {
     private val bd: BDIncident = Room
         .databaseBuilder(
             context.applicationContext,
             BDIncident::class.java,
             NOM_BD
         )
-        .createFromAsset(NOM_BD)
-        .build()
         .fallbackToDestructiveMigration()
+        .build()
 
     fun getIncidents(): Flow<List<Crime>> = bd.crimeDAO().getIncidents()
-    suspend fun getIncident(id: UUID) = bd.crimeDAO().getIncident(id)
+
+    suspend fun getIncident(id: UUID): Crime? = bd.crimeDAO().getIncident(id)
+
+    fun majIncident(crime: Crime) {
+        coroutineScope.launch {
+            bd.crimeDAO().majIncident(crime)
+        }
+    }
+
     companion object {
         private var INSTANCE: CrimeRepository? = null
 
@@ -32,7 +45,9 @@ class CrimeRepository private constructor(context: Context) {
         }
 
         fun get(): CrimeRepository {
-            return INSTANCE ?: throw IllegalStateException("CrimeRepository doit d'abord être initialisé")
+            return INSTANCE ?: throw IllegalStateException(
+                "CrimeRepository doit d\'abord être initialisé"
+            )
         }
     }
 }
