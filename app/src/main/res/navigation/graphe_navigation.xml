@@ -30,16 +30,24 @@
             android:id="@+id/selectTime"
             app:destination="@id/timePickerFragment" />
     </fragment>
+
     <dialog
         android:id="@+id/datePickerFragment"
         android:name="com.example.criminalintent.DatePickerFragment"
-        android:label="DatePickerFragment" >
+        android:label="DatePickerFragment">
         <argument
             android:name="dateIncident"
             app:argType="java.util.Date" />
     </dialog>
+
     <dialog
         android:id="@+id/timePickerFragment"
         android:name="com.example.criminalintent.TimePickerFragment"
-        android:label="TimePickerFragment" />
+        android:label="TimePickerFragment">
+        <!-- Argument requis : la date/heure actuelle de l'incident -->
+        <argument
+            android:name="dateIncident"
+            app:argType="java.util.Date" />
+    </dialog>
+
 </navigation>

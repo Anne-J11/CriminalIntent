@@ -8,7 +8,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.UUID
-import android.util.Log
 
 private const val NOM_BD = "BDIncident"
 
@@ -22,6 +21,7 @@ class CrimeRepository private constructor(
             BDIncident::class.java,
             NOM_BD
         )
+        //.createFromAsset("BDIncident")
         .fallbackToDestructiveMigration()
         .build()
 
@@ -33,6 +33,10 @@ class CrimeRepository private constructor(
         coroutineScope.launch {
             bd.crimeDAO().majIncident(crime)
         }
+    }
+
+    suspend fun ajouterIncident(crime: Crime) {
+        bd.crimeDAO().ajouterIncident(crime)
     }
 
     companion object {

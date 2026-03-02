@@ -1,8 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/crime_recycler_view"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:listitem="@layout/list_item_crime" />
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_titre" />
+
+    <EditText
+        android:id="@+id/et_title_crime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/crime_titre_mess"
+        android:importantForAutofill="no"
+        android:inputType="text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_details" />
+
+    <Button
+        android:id="@+id/btn_date_crime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_date" />
+
+    <CheckBox
+        android:id="@+id/cb_crime_resolu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_resolu" />
+
+    <Button
+        android:id="@+id/btn_time_crime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crime_time" />
+
+    <Button
+        android:id="@+id/suspect_incident"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/texte_choix_suspect"/>
+
+    <Button
+        android:id="@+id/rapport_incident"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/texte_rapport_incident"/>
+
+</LinearLayout>

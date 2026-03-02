@@ -2,6 +2,9 @@ package com.example.criminalintent
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -13,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.criminalintent.databinding.FragmentCrimeListBinding
 import kotlinx.coroutines.launch
+import java.util.Date
+import java.util.UUID
 
 class CrimeListFragment : Fragment() {
 
@@ -24,6 +29,11 @@ class CrimeListFragment : Fragment() {
         get() = checkNotNull(_binding) {
             "Impossible d'accéder au binding car elle est null. Est-ce que la vue est visible ?"
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +52,6 @@ class CrimeListFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 crimeListViewModel.listeIncidents.collect { listeIncidents ->
                     binding.crimeRecyclerView.adapter = CrimeListAdapter(listeIncidents) { incidentID ->
-                        // Navigation vers le fragment de détails avec l'ID de l'incident
                         findNavController().navigate(
                             CrimeListFragmentDirections.afficheDetailIncident(incidentID)
                         )
@@ -55,5 +64,34 @@ class CrimeListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater){
+        inflater.inflate(R.menu.fragment_crime_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId){
+            R.id.nouvel_incident ->{
+                afficherNouvelIncident()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun afficherNouvelIncident(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            val nouvelIncident = Crime (
+                id = UUID.randomUUID(),
+                titre = "",
+                date = Date(),
+                estResolu = false
+            )
+            crimeListViewModel.ajouterIncident(nouvelIncident)
+            findNavController().navigate(
+                CrimeListFragmentDirections.afficheDetailIncident(nouvelIncident.id)
+            )
+        }
     }
 }

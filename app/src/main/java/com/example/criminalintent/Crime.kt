@@ -11,5 +11,5 @@ data class Crime(
     @PrimaryKey val id: UUID,
     @ColumnInfo(name = "title") val titre: String,
     val date: Date,
-    @ColumnInfo(name = "isSalved") val estResolu: Boolean
+    @ColumnInfo(name = "isSolved") val estResolu: Boolean  // ← isSolved et non isSalved
 )

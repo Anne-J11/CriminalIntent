@@ -11,6 +11,6 @@ class ConvTypeIncident {
 
     @TypeConverter
     fun versDate(milliseconds: Long): Date {
-        return Date()
+        return Date(milliseconds)
     }
 }
