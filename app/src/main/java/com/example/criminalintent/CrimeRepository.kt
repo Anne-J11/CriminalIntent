@@ -3,6 +3,7 @@ package com.example.criminalintent
 import android.content.Context
 import androidx.room.Room
 import com.example.criminalintent.bd.BDIncident
+import com.example.criminalintent.bd.migration_1_2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +23,7 @@ class CrimeRepository private constructor(
             NOM_BD
         )
         //.createFromAsset("BDIncident")
-        .fallbackToDestructiveMigration()
+        .addMigrations(migration_1_2)
         .build()
 
     fun getIncidents(): Flow<List<Crime>> = bd.crimeDAO().getIncidents()
